@@ -1,6 +1,8 @@
 from transformers import AutoTokenizer
 from transformers import AutoModelForSequenceClassification
 from scipy.special import softmax
+import random
+
 
 import numpy as np
 import pandas as pd 
@@ -91,17 +93,88 @@ about_page = """
 # About
 
 This project was created by Nisarg and Pratham.
+
+
+<|Email|button|on_action=local_callback|>
+
+
+<|LinkedIn|button|on_action=local_callback|>
+
+
+<|Github|button|on_action=local_callback|>
+
+
+
+
+  Made with :coffee: and ❤️ for MLH Hackathon Hack the Classroom.
+
+
 """
 
 form_page = """
 # Weather Data Input Form
 
+Temperature: <|{temp}|input|>
+
+
+Pressure: <|{pres}|input|>
+
+
+Humidity: <|{humd}|input|>
+
+
+Wind Speed: <|{wind}|input|>
+<br />
+
+
+
+Rating: <|{value}|slider|min=1|max=10|>
+<br />
+
+
+Want Data: <|{value}|toggle|lov=Yes;No|>
+
+
+ <|button|label=Submit|>
+
+
+
 
 
 """
 
+
+def get_data(path_to_csv: str):
+    # pandas.read_csv() returns a pd.DataFrame
+    dataset = pd.read_csv(path_to_csv)
+    dataset["Date"] = pd.to_datetime(dataset["Date"])
+    return dataset
+
+
+# Read the dataframe
+path_to_csv = "dataset.csv"
+dataset = get_data(path_to_csv)
+
+# Initial value
+n_week = 10
+
 trend_page = """
-# Weather Data Input Form
+# Weather Data Trends
+
+Week number: *<|{n_week}|>*
+
+Interact with this slider to change the week number:
+
+<|{n_week}|slider|min=1|max=52|>
+
+## Dataset:
+
+Display the last three months of data:
+<|{dataset[9000:]}|chart|type=bar|x=Date|y=Value|>
+
+<br/>
+
+<|{dataset}|table|width=100%|>
 
 
 
@@ -113,10 +186,10 @@ tokenizer = AutoTokenizer.from_pretrained(MODEL)
 model = AutoModelForSequenceClassification.from_pretrained(MODEL)
 
 dataframe = pd.DataFrame({"Text":[''],
-                          "Score Pos":[0.33],
-                          "Score Neu":[0.33],
-                          "Score Neg":[0.33],
-                          "Overall":[0]})
+                          "Temp":[0.33],
+                          "Pressure":[0.33],
+                          "Humidity":[0.33],
+                          "WindSpeed":[0]})
 
 dataframe2 = dataframe.copy()
 
@@ -146,19 +219,32 @@ path = ""
 treatment = 0
 
 page_file = """
-<|{path}|file_selector|extensions=.txt|label=Upload .txt file|on_action=analyze_file|> <|{f'Downloading {treatment}%...'}|>
+<|toggle|theme|>
 
-<br/>
+# Weather Data Analysis
 
-<|Table|expandable|
-<|{dataframe2}|table|width=100%|number_format=%.2f|>
-|>
+<|{dataframe}|table|number_format=%.2f|>
 
-<br/>
-
-<|{dataframe2}|chart|type=bar|x=Text|y[1]=Score Pos|y[2]=Score Neu|y[3]=Score Neg|y[4]=Overall|color[1]=green|color[2]=grey|color[3]=red|type[4]=line|height=600px|>
-
+<|{dataframe}|chart|type=bar|x=Text|y[1]=Score Pos|y[2]=Score Neu|y[3]=Score Neg|y[4]=Overall|color[1]=green|color[2]=grey|color[3]=red|type[4]=line|>
 """
+
+dataframe = pd.DataFrame({"Text":['Temperature', 'Humudity', 'Pressure'],
+                          "Score Pos":[1, 1, 4],
+                          "Score Neu":[2, 3, 1],
+                          "Score Neg":[1, 2, 0],
+                          "Overall":[0, -1, 4]})
+
+
+def local_callback(state):
+    notify(state, 'info', f'The text is: {state.text}')
+    
+    temp = state.dataframe.copy()
+    state.dataframe = temp.append({"Text":state.text,
+                                   "Score Pos":0,
+                                   "Score Neu":0,
+                                   "Score Neg":0,
+                                   "Overall":0}, ignore_index=True)
+    state.text = ""
 
 def analyze_file(state):
     state.dataframe2 = dataframe2
