@@ -11,6 +11,7 @@ text = "Original text"
 page = """
 # IoT Weather Analysis App
 
+![physical_iot](https://github.com/Nishu0/WeatherAnalysis/assets/89217455/2ed674c8-0ac3-4bf9-8190-c4a3bcac04c6)
 
 ## Welcome to IoT Weather Analysis
 
@@ -28,6 +29,8 @@ Our IoT Weather Analysis App allows you to:
 
 - Predict Future Weather: Utilize data analysis to predict future weather conditions, helping you plan your activities accordingly.
 
+![download](https://github.com/Nishu0/WeatherAnalysis/assets/89217455/26a28b2e-a8cb-42a9-9d79-f830bd4fd47f )
+
 ### How It Works
 
 Our app relies on the following IoT devices for data gathering:
@@ -39,6 +42,8 @@ Our app relies on the following IoT devices for data gathering:
 - **BMP180:** This barometric pressure sensor helps us gauge atmospheric pressure changes, which can indicate weather shifts.
 
 The IoT devices continuously collect data and transmit it to our app, where it is processed and analyzed using advanced algorithms and machine learning models.
+
+![flowchart](https://github.com/Nishu0/WeatherAnalysis/assets/89217455/0028ec5a-025d-4856-b282-514926ce9d6c)
 
 ### Key Features
 
@@ -68,20 +73,40 @@ Discover the power of IoT-driven weather analysis with our app. Start exploring 
 
 Follow us on social media for updates and news:
 
-- [Facebook](#) 
 - [Twitter](#)
-- [Instagram](#)
 - [LinkedIn](#)
 
 #### Contact Us
 
-If you have any questions or feedback, feel free to reach out to us at [contact@email.com](mailto:contact@email.com).
+If you have any questions or feedback, feel free to reach out to us at [itsnisargthakkar@email.com](mailto:itsnisargthakkar@email.com).
 
 #### Privacy Policy
 
 Read our [Privacy Policy](#) to learn about how we handle your data and ensure your privacy.
 
 """
+
+
+about_page = """
+# About
+
+This project was created by Nisarg and Pratham.
+"""
+
+form_page = """
+# Weather Data Input Form
+
+
+
+"""
+
+trend_page = """
+# Weather Data Input Form
+
+
+
+"""
+
 
 MODEL = f"cardiffnlp/twitter-roberta-base-sentiment"
 tokenizer = AutoTokenizer.from_pretrained(MODEL)
@@ -156,8 +181,11 @@ def analyze_file(state):
     
 
 pages = {"/":"<|toggle|theme|>\n<center>\n<|navbar|>\n</center>",
-         "line":page,
-         "text":page_file}
+         "Home":page,
+         "Analysis":page_file,
+         "About": about_page,
+         "Form": form_page,
+         "Trends": trend_page}
 
 Gui(pages=pages).run(use_reloader=True, port=8000)
 
